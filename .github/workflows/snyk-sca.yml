@@ -1,30 +1,24 @@
-name: DevSecOps Snyk SCA
+name: DevSecOps — Snyk SCA
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ master, main ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ master, main ]
 
 jobs:
   snyk-scan:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
+      - uses: actions/checkout@v4
+      - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-
-      - name: Install Dependencies
-        run: npm install --ignore-scripts --package-lock-only
-
+          node-version: 18
+      - run: npm install --ignore-scripts
       - name: Snyk SCA Scan
         uses: snyk/actions/node@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           args: --severity-threshold=high
-        continue-on-error: true
